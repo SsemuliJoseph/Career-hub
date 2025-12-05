@@ -1,0 +1,221 @@
+/**
+ * CV.CSS - CV/Resume Upload and Display Styles
+ * TEACHING NOTES:
+ * - Dual theme support (light/dark) using CSS custom properties
+ * - File upload area with drag-and-drop visual feedback
+ * - Form controls with consistent styling and transitions
+ * - Theme toggle functionality with smooth color transitions
+ */
+
+/* ====== GLOBAL BASE STYLES ====== */
+:root {
+  /* Light theme colors */
+  --bg-color: #f5f7fa;
+  --card-bg: #ffffff;
+  --text-color: #222;
+  --label-color: #555;
+  --border-color: #ccc;
+  --accent: #0a66c2;
+  --accent-hover: #084c91;
+  --upload-bg: #fafafa;
+  --upload-hover-bg: #f1f8ff;
+  --shadow: rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition: all 0.3s ease;
+}
+/* ====== DARK MODE ====== */
+body.dark-theme {
+  --bg-color: #101418;
+  --card-bg: #1a1f24;
+  --text-color: #f3f3f3;
+  --label-color: #cfcfcf;
+  --border-color: #333;
+  --accent: #3ea6ff;
+  --accent-hover: #6fc3ff;
+  --upload-bg: #1f252b;
+  --upload-hover-bg: #28313a;
+  --shadow: rgba(255, 255, 255, 0.05);
+}
+
+
+/* Dark mode overrides */
+body.light-theme {
+  --bg-color: #101418;
+  --card-bg: #1a1f24;
+  --text-color: #f3f3f3;
+  --label-color: #cfcfcf;
+  --border-color: #333;
+  --accent: #3ea6ff;
+  --accent-hover: #6fc3ff;
+  --upload-bg: #1f252b;
+  --upload-hover-bg: #28313a;
+  --shadow: rgba(255, 255, 255, 0.05);
+}
+
+/* ====== BODY ====== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+/* Center content inside the main */
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 2rem 1rem;
+}
+
+/* ====== CARD FORM ====== */
+.card-form {
+  background: var(--card-bg);
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px var(--shadow);
+  max-width: 480px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: var(--transition);
+}
+
+.card-form h2 {
+  text-align: center;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+}
+
+/* ====== INPUT & TEXTAREA ====== */
+label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+  color: var(--label-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  background: var(--card-bg);
+  color: var(--text-color);
+  transition: var(--transition);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 5px rgba(10, 102, 194, 0.25);
+}
+
+/* ====== FILE UPLOAD ====== */
+.file-upload-box {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  color: var(--label-color);
+  background: var(--upload-bg);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.file-upload-box:hover {
+  background: var(--upload-hover-bg);
+  border-color: var(--accent);
+}
+
+.file-upload-box input[type="file"] {
+  display: block;
+  margin: 0 auto 0.5rem auto;
+  color: var(--text-color);
+}
+
+/* ====== BUTTONS ====== */
+.btn {
+  display: inline-block;
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* ====== HEADER & FOOTER COMPATIBILITY ====== */
+header,
+footer {
+  background: var(--card-bg);
+  color: var(--text-color);
+  transition: var(--transition);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.9rem;
+  padding: 1rem 2rem;
+}
+
+.footer-social a {
+  color: var(--accent);
+  margin-left: 0.5rem;
+  transition: var(--transition);
+}
+
+.footer-social a:hover {
+  color: var(--accent-hover);
+}
+
+/* ====== RESPONSIVE DESIGN ====== */
+@media (max-width: 600px) {
+  .card-form {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  .card-form h2 {
+    font-size: 1.3rem;
+  }
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}

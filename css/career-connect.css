@@ -1,0 +1,179 @@
+/**
+ * CAREER-CONNECT.CSS - CareerConnect Branding Styles
+ * TEACHING NOTES:
+ * - Dual theme (light/dark) using CSS custom properties
+ * - Professional LinkedIn-inspired color palette
+ * - Smooth theme transitions (0.3s) for better UX
+ * - Base typography using Public Sans and Noto Sans fonts
+ */
+
+:root {
+  /* Light mode colors */
+  --color-primary: #1392ec;
+  --color-primary-hover: #0d7bc7;
+  --color-background: #f6f7f8;
+  --color-content: #0d161b;
+  --color-subtle: #cfdde7;
+  --color-border: #e1e7ec;
+  --color-card: #ffffff;
+  --color-card-hover: #f8f9fa;
+
+  /* Dark mode colors */
+  --color-dark-primary: #1392ec;
+  --color-dark-primary-hover: #1aa1ff;
+  --color-dark-background: #101a22;
+  --color-dark-content: #e1e7ec;
+  --color-dark-subtle: #2a3a48;
+  --color-dark-border: #2a3a48;
+  --color-dark-card: #192833;
+  --color-dark-card-hover: #233948;
+}
+
+/* Base styles */
+body {
+  font-family: 'Public Sans', 'Noto Sans', sans-serif;
+  line-height: 1.5;
+  color: var(--color-content);
+  background-color: var(--color-background);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+  --color-primary: var(--color-dark-primary);
+  --color-primary-hover: var(--color-dark-primary-hover);
+  --color-background: var(--color-dark-background);
+  --color-content: var(--color-dark-content);
+  --color-subtle: var(--color-dark-subtle);
+  --color-border: var(--color-dark-border);
+  --color-card: var(--color-dark-card);
+  --color-card-hover: var(--color-dark-card-hover);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: 1em;
+}
+
+/* Layout */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: var(--color-content);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--color-primary);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--color-subtle);
+  color: var(--color-content);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-border);
+}
+
+/* Cards */
+.card {
+  background-color: var(--color-card);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.card:hover {
+  background-color: var(--color-card-hover);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Forms */
+.form-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  background-color: var(--color-card);
+  color: var(--color-content);
+}
+
+/* Utility classes */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+/* Responsive grid */
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+}

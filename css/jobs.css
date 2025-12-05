@@ -1,0 +1,21 @@
+/**
+ * JOBS.CSS - Job Listings Page Styles
+ * TEACHING NOTES:
+ * - Job card design with expandable details (toggle on click)
+ * - Search bar styling with flexible layout
+ * - Hover effects for better user interaction
+ * - Uses box-shadow and border-radius for modern card design
+ */
+
+ body {font-family: 'Segoe UI', sans-serif; background: #2f343d; margin: 0;}
+    header {background: #2f343d; color: #fff; padding: 1rem;}
+    .logo-text {font-weight: bold; margin-left: .5rem;}
+    .page-content-wrapper {max-width: 1000px; margin: auto; padding: 1rem;}
+    .search-row {display: flex; gap: .5rem; margin: 1rem 0;}
+    .search-row input {flex: 1; padding: .6rem .8rem; border-radius: 8px; border: 1px solid #ccc;}
+    .btn-primary {background: #0a66c2; color: #fff; border: none; border-radius: 6px; padding: .6rem 1rem; cursor: pointer;}
+    .job-card {background: #fff; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.1); cursor: pointer;}
+    .job-card:hover {box-shadow: 0 2px 6px rgba(0,0,0,.15);}
+    .job-details {display: none; margin-top: .5rem; border-top: 1px solid #e5e7eb; padding-top: .5rem;}
+    .job-card.active .job-details {display: block;}
+    .small-muted {color: #6b7280;}

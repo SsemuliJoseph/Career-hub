@@ -1,0 +1,60 @@
+<?php
+/**
+ * Server 1 Configuration - Student & Jobs Module
+ * 
+ * INSTRUCTIONS:
+ * 1. Copy this file to config_server1.php
+ * 2. Update the IP addresses with your actual server IPs
+ * 3. Change the API_SECRET_KEY to a secure random string
+ */
+
+// ========================================
+// LOCAL DATABASE CONFIGURATION
+// ========================================
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'uniconnect_db');
+
+// ========================================
+// SERVER 2 CONNECTION (Employer & Admin)
+// ========================================
+// Replace 192.168.1.101 with Server 2's actual IP address
+define('SERVER2_URL', 'http://192.168.1.101');
+define('SERVER2_API', 'http://192.168.1.101/api');
+
+// Remote Database (Server 2) - for direct database queries if needed
+define('DB2_HOST', '192.168.1.101');
+define('DB2_USER', 'remote_user');
+define('DB2_PASS', 'password123');
+define('DB2_NAME', 'uniconnect_db');
+
+// ========================================
+// SERVER IDENTIFICATION
+// ========================================
+define('SERVER_ROLE', 'STUDENT_JOBS');
+define('SERVER_ID', 1);
+
+// ========================================
+// SECURITY
+// ========================================
+// IMPORTANT: Change this to a unique, secure random string!
+// Generate one at: https://www.random.org/strings/
+define('API_SECRET_KEY', 'CHANGE_THIS_TO_SECURE_RANDOM_STRING_12345');
+
+// ========================================
+// FEATURES ENABLED ON THIS SERVER
+// ========================================
+define('ENABLE_STUDENT_MODULE', true);
+define('ENABLE_JOBS_MODULE', true);
+define('ENABLE_EMPLOYER_MODULE', false);
+define('ENABLE_ADMIN_MODULE', false);
+
+// ========================================
+// CROSS-SERVER SYNC SETTINGS
+// ========================================
+define('AUTO_SYNC_ENABLED', true);
+define('SYNC_INTERVAL', 300); // seconds (5 minutes)
+define('CACHE_ENABLED', true);
+define('CACHE_DURATION', 600); // seconds (10 minutes)
+?>
