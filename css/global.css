@@ -1,0 +1,1864 @@
+/**
+ * global.css - Global Styles and Design System
+ * 
+ * Teaching notes: This is the main stylesheet that defines the visual design system.
+ * Key CSS concepts covered:
+ * - CSS Custom Properties (CSS Variables): --variable-name for reusable values
+ * - :root pseudo-class: Defines variables globally (accessible everywhere)
+ * - Box model: margin, padding, borders affect element sizing
+ * - Flexbox: Modern layout system for responsive designs
+ * - Responsive design: max-width, media queries, fluid layouts
+ * - CSS transitions: Smooth animations on property changes
+ * 
+ * Design system approach:
+ * - Define colors/spacing/fonts in variables for consistency
+ * - Change variables in one place to update entire site
+ * - Maintain visual hierarchy with spacing scale
+ * - Use semantic names (--primary-color not --blue)
+ */
+
+/* 
+ * --- 1. CSS Variables for Consistency (Modern Light-Dark Balance) ---
+ * 
+ * CSS Custom Properties (Variables):
+ * - Syntax: --variable-name: value;
+ * - Access: var(--variable-name)
+ * - Scope: Defined in :root = global scope (accessible in all elements)
+ * - Benefits: Change once, updates everywhere; easier maintenance; theme switching
+ * 
+ * Color system explanation:
+ * - Primary action color: --linkedin-blue (buttons, links, call-to-action)
+ * - Background layers: --background-color (body), --card-background (cards/panels)
+ * - Text hierarchy: --text-dark (headings), --text-medium (body text)
+ * - Borders: --border-color (dividers, card outlines)
+ * 
+ * :root pseudo-class:
+ * - Represents <html> element at highest level in DOM tree
+ * - Variables defined here are inherited by all child elements
+ * - Override in specific elements for scoped changes
+ */
+:root {
+    /* Brand Colors */
+    --linkedin-blue: #0a66c2;       /* Primary Action Color (LinkedIn Blue) */
+    --primary-hover: #004182;       /* Darker blue for hover states (accessibility) */
+    
+    /* Background Colors (Dark theme) */
+    --background-color: #2f343d;    /* Body background (light-medium grey) */
+    --card-background: #3a3f47;     /* Cards/panels (slightly darker for depth) */
+    
+    /* Text Colors (WCAG contrast compliant) */
+    --text-dark: rgba(255, 255, 255, 0.92); /* Primary text (bright white with slight transparency) */
+    --text-medium: rgba(255, 255, 255, 0.7); /* Secondary text (softer white for hierarchy) */
+    
+    /* Border/Divider Colors */
+    --border-color: #474d57;        /* Subtle grey for borders, dividers, card edges */
+    
+    /* Typography */
+    --font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* System font stack: Uses native OS fonts for best performance and familiarity
+       - -apple-system: macOS/iOS San Francisco font
+       - BlinkMacMacSystemFont: Chrome on macOS
+       - Segoe UI: Windows font
+       - Roboto: Android font
+       - Fallback to Helvetica Neue, Arial, sans-serif
+    */
+    
+    /* Spacing Scale (8px base unit system) */
+    --space-sm: 0.5rem;   /* 8px (0.5 × 16px default root font size) */
+    --space-md: 1rem;     /* 16px (1 × 16px) */
+    --space-lg: 1.5rem;   /* 24px (1.5 × 16px) */
+    /* Why rem units? Scales with user's browser font size preference (accessibility) */
+}
+
+/**
+ * --- 2. Base & Typography ---
+ * 
+ * Universal styles applied to fundamental elements.
+ * These form the foundation of the design system.
+ */
+
+/**
+ * Body element: Main container for all page content
+ * - font-family: var(--font-family) pulls value from CSS variable
+ * - background-color: sets page background (dark grey)
+ * - color: default text color (bright white)
+ * - margin: 0, padding: 0 removes browser default spacing (CSS reset)
+ * - min-height: 100vh ensures page fills viewport height (100vh = 100% viewport height)
+ * - line-height: 1.5 improves readability (1.5× font size spacing between lines)
+ */
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    line-height: 1.5;  /* WCAG recommends 1.5 minimum for body text */
+}
+
+/**
+ * Heading elements: Create visual hierarchy
+ * - color: var(--text-dark) ensures bright text on dark background
+ * - line-height: 1.25 tighter spacing for headings (improves visual weight)
+ * - margin-top: 0 removes default top margin (prevents unwanted spacing)
+ * 
+ * Why different line-heights for headings vs body?
+ * - Headings: Tighter (1.25) makes them feel more compact and bold
+ * - Body: Looser (1.5) improves readability for long-form text
+ */
+h1, h2, h3, h4 {
+    color: var(--text-dark);
+    line-height: 1.25;
+    margin-top: 0;
+}
+
+/**
+ * Link styling: All <a> elements
+ * - color: LinkedIn blue for brand consistency
+ * - text-decoration: none removes default underline (modern design trend)
+ * - transition: smooth color change on hover (0.2s duration)
+ * 
+ * Transition breakdown:
+ * - transition: property duration timing-function
+ * - color 0.2s = animate color change over 0.2 seconds
+ * - Default timing-function: ease (slow start, fast middle, slow end)
+ */
+a {
+    color: var(--linkedin-blue);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+/**
+ * Link hover state: Provides visual feedback when user hovers
+ * - :hover pseudo-class activates on mouse hover
+ * - Darker blue (better contrast, indicates interactivity)
+ * - Underline on hover (helps users identify clickable elements)
+ * - Accessibility: Provides non-color-based hover indicator (underline)
+ */
+a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/**
+ * --- 3. Full-Page Layouts ---
+ * 
+ * Flexbox-based layout system for sticky footer and page structure.
+ * Ensures footer stays at bottom even with minimal content.
+ */
+
+/**
+ * Site wrapper: Contains entire page (header + main + footer)
+ * - display: flex enables flexbox layout
+ * - flex-direction: column stacks children vertically (header on top, footer on bottom)
+ * - min-height: 100vh ensures page fills viewport (viewport height = browser window height)
+ * 
+ * Flexbox basics:
+ * - Container (parent): display: flex
+ * - Children (flex items): automatically become flex items
+ * - flex-direction: row (horizontal) or column (vertical)
+ */
+.site-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/**
+ * Main content area: Contains page body (between header and footer)
+ * - flex-grow: 1 makes this element expand to fill available space
+ * - Result: Footer is pushed to bottom even with minimal content
+ * 
+ * flex-grow explained:
+ * - Flex items share extra space based on flex-grow ratio
+ * - flex-grow: 0 (default) = don't grow
+ * - flex-grow: 1 = grow to fill space
+ * - If multiple items have flex-grow: 1, they share space equally
+ */
+.main-content {
+    flex-grow: 1; /* Ensures content pushes the footer down */
+}
+
+/**
+ * Wide page content container: Centers and constrains content width
+ * - max-width: 1128px prevents content from becoming too wide on large screens
+ * - margin: 0 auto centers container horizontally (auto left/right margins)
+ * - padding: 20px provides breathing room on small screens
+ * 
+ * Why max-width instead of width?
+ * - max-width: allows container to shrink below 1128px on smaller screens
+ * - width: 1128px would overflow on screens < 1128px wide
+ * 
+ * Centering with margin: 0 auto:
+ * - 0 = top/bottom margin
+ * - auto = left/right margin (browser calculates equal margins to center)
+ * - Only works with fixed or max-width (not width: 100%)
+ */
+.page-content-wrapper {
+    max-width: 1128px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/**
+ * Centered containers (For Login/Signup Pages):
+ * - display: flex with justify-content: center and align-items: center
+ * - Creates perfect centering (horizontal and vertical)
+ * - min-height: 100vh ensures full viewport height
+ * - padding: 20px prevents content from touching edges on small screens
+ * 
+ * Flexbox centering:
+ * - justify-content: center centers along main axis (horizontal for row, vertical for column)
+ * - align-items: center centers along cross axis (vertical for row, horizontal for column)
+ * - Both together = perfect center regardless of content size
+ */
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/**
+ * Card Forms: Styled containers for login/signup forms
+ * - background: darker grey creates depth (card appears elevated)
+ * - border-radius: 8px rounds corners (modern design trend)
+ * - box-shadow: creates subtle shadow for depth perception
+ * - padding: 24px 32px (top/bottom: 24px, left/right: 32px)
+ * - width: 100% makes card responsive (shrinks to fit small screens)
+ * - max-width: 400px prevents card from becoming too wide
+ * 
+ * Box-shadow breakdown:
+ * - box-shadow: x-offset y-offset blur spread color
+ * - 0 1px 3px = no horizontal offset, 1px down, 3px blur
+ * - rgba(0, 0, 0, 0.4) = black with 40% opacity (semi-transparent shadow)
+ * 
+ * Padding shorthand:
+ * - padding: 24px 32px
+ * - First value (24px) = top and bottom
+ * - Second value (32px) = left and right
+ * - Full syntax: padding: top right bottom left (clockwise from top)
+ */
+.card-form {
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    padding: 24px 32px;
+    width: 100%;
+    max-width: 400px; /* Kept max-width for forms like Login/CV upload */
+}
+
+/* --- 4. Header & Navigation (Tightened Structure) --- */
+header {
+    background-color: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 0; /* Ensures the header itself is tight */
+}
+
+.header-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--nav-bg);
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-left: 20px;
+}
+.nav-links a {
+    color: var(--text-medium);
+    font-size: 1rem;
+    padding: 5px 0;
+}
+.nav-links a:hover {
+    color: var(--text-dark);
+    text-decoration: none;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* --- 5. Inputs & Buttons (User-Defined) --- */
+input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: var(--text-dark);
+    background-color: #444b55; /* Slightly lighter input background */
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--linkedin-blue);
+    box-shadow: 0 0 0 1px var(--linkedin-blue);
+    outline: none;
+}
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 24px; /* Pill shape */
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    box-sizing: border-box;
+}
+
+/* Primary Button */
+.btn-primary {
+    background-color: var(--linkedin-blue);
+    color: #ffffff;
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--linkedin-blue);
+    color: var(--linkedin-blue);
+}
+.btn-secondary:hover {
+    background-color: rgba(10, 102, 194, 0.1);
+    color: #ffffff;
+}
+
+/* --- 6. Article Cards & Components --- */
+.article-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s, transform 0.2s;
+}
+
+.article-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px); /* Subtle lift on hover */
+}
+
+.article-card-image {
+    width: 100%;
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+}
+
+.article-card-content {
+    padding: 16px;
+}
+
+.article-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.article-card-tag {
+    font-size: 12px;
+    color: var(--linkedin-blue);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* --- 7. Responsive Grid Structures --- */
+
+.grid-3-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+@media (min-width: 768px) {
+    .grid-3-col {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 40px 0;
+    text-align: center;
+}
+.hero-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+/* === Theme-Aware, Fully Responsive Search Bar === */
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 24px auto;
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid var(--border-color, #ccc);
+  background-color: var(--card-background, #fff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 18px;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text-dark, #222);
+  border-radius: 30px 0 0 30px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-bar input::placeholder {
+  color: var(--text-medium, #777);
+}
+
+.search-bar .btn {
+  border: none;
+  background-color: var(--linkedin-blue, #0a66c2);
+  color: #fff;
+  font-weight: 600;
+  padding: 0 24px;
+  border-radius: 0 30px 30px 0;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
+}
+
+.search-bar .btn:hover {
+  background-color: var(--primary-hover, #004182);
+  transform: scale(1.02);
+}
+
+/* Suggestion Dropdown */
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px auto 0;
+  max-width: 600px;
+  background: var(--card-background, #fff);
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.suggestions-list li {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.suggestions-list li:hover {
+  background: #f0f4f8;
+}
+
+/* === Mobile Layout === */
+@media (max-width: 480px) {
+  .search-bar {
+    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  .search-bar input {
+    border-radius: 12px 12px 0 0;
+    padding: 10px 14px;
+  }
+
+  .search-bar .btn {
+    border-radius: 0 0 12px 12px;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .suggestions-list {
+    width: 90%;
+  }
+}
+
+
+/* Job/Internship Page Layout (Filter | List | Details) */
+.job-listing-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr; /* Default to single column */
+}
+
+@media (min-width: 1024px) {
+    .job-listing-grid {
+        /* Filter (250px) | List (1fr) | Details (350px) */
+        grid-template-columns: 250px 1fr 350px;
+    }
+}
+
+.filters-panel,
+.job-details-panel {
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+}
+.job-details-panel {
+    position: sticky;
+    top: 70px; /* Stays below the header */
+    height: calc(100vh - 90px); /* Height minus header and padding */
+    overflow-y: auto;
+}
+
+.job-card {
+    background-color: var(--card-background);
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.2s, border-left 0.2s;
+    margin-bottom: 10px;
+}
+.job-card:hover, .job-card.active {
+    background-color: #444b55;
+    border-left-color: var(--linkedin-blue);
+}
+
+/* --- 8. Footer --- */
+.footer {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-background);
+    margin-top: 40px;
+    padding: 20px 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.footer-content p {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.footer-social {
+    display: flex;
+    gap: 20px;
+}
+.footer-social a {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+    .footer-content {
+        flex-direction: row;
+        margin-top: 0;
+    }
+}
+/* === 9. Light Theme Overrides === */
+.light-theme {
+    --background-color: #ffffff;
+    --card-background: #f5f5f5;
+    --text-dark: #1a1a1a;
+    --text-medium: #333333;
+    --border-color: #d1d5db;
+    --linkedin-blue: #0a66c2;
+    --primary-hover: #004182;
+}
+
+/* Optional: Smooth transition when toggling */
+body, header, .card-form, .article-card, .job-card, .footer {
+    transition: background-color 0.3s, color 0.3s;
+}
+.icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.icon-wrapper svg {
+  color: var(--linkedin-blue);
+  transition: transform 0.2s, color 0.3s;
+}
+
+.feature-card:hover .icon-wrapper svg {
+  transform: scale(1.1);
+  color: var(--primary-hover);
+}
+/* Center container for login/signup pages */
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px); /* minus header height */
+  padding: 20px;
+}
+
+/* Card-style form (for login & signup) */
+.card-form.login-form {
+  background-color: var(--card-background);
+  border-radius: 10px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.card-form.login-form h2 {
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+
+.card-form.login-form p {
+  margin-bottom: 20px;
+  color: var(--text-medium);
+  font-size: 0.95rem;
+}
+
+.card-form.login-form input,
+.card-form.login-form select {
+  margin-bottom: 16px;
+  background-color: #444b55;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-dark);
+}
+
+.card-form.login-form button {
+  margin-top: 10px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo svg {
+  transition: transform 0.3s, stroke 0.3s;
+}
+
+.logo:hover svg {
+  transform: scale(1.05);
+  stroke: var(--primary-hover);
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.light-theme .logo-text {
+  color: var(--text-dark);
+}
+/* --- Layout for centered form pages (signup/login) --- */
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px); /* full height minus header */
+  padding: 20px;
+}
+
+/* Card-style form container */
+.card-form {
+  background-color: var(--card-background, #1e1e1e);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Input and select fields */
+.card-form input,
+.card-form select,
+.card-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #ccc);
+  background-color: #2c2f36;
+  color: var(--text-dark, #fff);
+  font-size: 0.95rem;
+}
+
+/* Center links and button */
+.card-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--linkedin-blue, #0a66c2);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.card-form button:hover {
+  background-color: var(--primary-hover, #004182);
+}
+
+/* --- Keep navigation bar fixed at the top --- */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: var(--card-background, #121212);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* Add top padding to body so content doesn’t hide behind navbar */
+body {
+  margin: 0;
+  padding-top: 80px; /* Adjust if your header is taller */
+}
+.light-theme .card-form {
+  background-color: #ffffff;
+  color: #1a1a1a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .card-form input,
+.light-theme .card-form select,
+.light-theme .card-form textarea {
+  background-color: #f5f5f5;
+  color: #000;
+  border-color: #ddd;
+}
+.footer-social {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.social-link svg {
+  stroke: var(--linkedin-blue);
+  transition: transform 0.3s, stroke 0.3s;
+}
+
+.social-link:hover svg {
+  transform: scale(1.1);
+  stroke: var(--primary-hover);
+}
+
+/* Light mode adaptation */
+.light-theme .social-link svg {
+  stroke: #0a66c2;
+}
+.job-main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 900px) {
+            .job-main-layout {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+        .filter-panel {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            height: fit-content;
+        }
+        .filter-group h4 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        .job-list-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 1200px) {
+            .job-list-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .job-list {
+            height: 80vh;
+            overflow-y: auto;
+        }
+        .job-card {
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 10px;
+        }
+        .job-card:hover {
+            background-color: var(--background-color);
+        }
+        .job-card.active {
+            border: 2px solid var(--linkedin-blue);
+            background-color: var(--background-color);
+        }
+        .job-details-panel {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 20px;
+        }
+  .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 0;
+        }
+        .article-image {
+            width: 100%;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .article-content h2, .article-content h3 {
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .check-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .check-list li {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .check-icon {
+            color: var(--linkedin-blue);
+            font-size: 24px;
+            line-height: 1;
+        }
+        /* Custom checkmark icon using CSS content property */
+        .check-icon::before {
+            content: "✓";
+            font-weight: 900;
+        }
+		
+.article-video {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 30px auto;
+  position: relative;
+}
+
+/* Container keeps 16:9 ratio and responsiveness */
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Video frame */
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 10px;
+}
+
+/* Overlay text styling */
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  opacity: 0;
+  animation: fadeIn 2s ease-in-out forwards 1s;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.video-overlay h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.video-overlay p {
+  font-size: 1rem;
+  max-width: 600px;
+  line-height: 1.5;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .video-overlay h2 {
+    font-size: 1.3rem;
+  }
+  .video-overlay p {
+    font-size: 0.9rem;
+  }
+}
+/* ======= GLOBAL NAVIGATION BAR ======= */
+.main-header {
+  width: 100%;
+  background-color: var(--card-background, #fff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--linkedin-blue, #0a66c2);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.logo-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0a66c2;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-dark, #333);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a:focus {
+  color: var(--linkedin-blue, #0a66c2);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  cursor: pointer;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.btn-secondary {
+  background-color: #f3f2ef;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e0dfdc;
+}
+
+.small-btn {
+  font-size: 0.9rem;
+  padding: 6px 10px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .nav-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .header-actions {
+    margin-top: 10px;
+  }
+}
+
+
+/* ======================================================
+   CAREER CONNECT HUB — GLOBAL STYLES (Unified & Optimized)
+   ====================================================== */
+
+/* === 1. CSS VARIABLES === */
+:root {
+  --linkedin-blue: #0a66c2;
+  --primary-hover: #004182;
+  --background-color: #2f343d;
+  --card-background: #3a3f47;
+  --text-dark: rgba(255, 255, 255, 0.92);
+  --text-medium: rgba(255, 255, 255, 0.7);
+  --border-color: #474d57;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* === 2. BASE STYLES === */
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
+  padding-top: 80px; /* Prevent content hiding under fixed header */
+}
+
+h1, h2, h3, h4 {
+  color: var(--text-dark);
+  line-height: 1.25;
+  margin-top: 0;
+}
+
+a {
+  color: var(--linkedin-blue);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* === 3. LAYOUT STRUCTURE === */
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-content-wrapper {
+  max-width: 1128px;
+  margin: 0 auto;
+  padding: 20px;
+  width: 100%;
+}
+
+.main-content {
+  flex-grow: 1;
+}
+
+/* === 4. HEADER / NAVBAR (Unified for all pages) === */
+header {
+  background-color: var(--card-background);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.header-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--nav-bg);
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo svg {
+  width: 40px;
+  height: 40px;
+  stroke: var(--linkedin-blue);
+  transition: transform 0.3s, stroke 0.3s;
+}
+
+.logo:hover svg {
+  transform: scale(1.05);
+  stroke: var(--primary-hover);
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: var(--text-medium);
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--linkedin-blue);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === 5. BUTTONS === */
+.btn {
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: var(--linkedin-blue);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--linkedin-blue);
+  color: var(--linkedin-blue);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(10, 102, 194, 0.1);
+}
+
+/* === 6. INPUTS & FORMS === */
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: var(--text-dark);
+  background-color: #444b55;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--linkedin-blue);
+  box-shadow: 0 0 0 1px var(--linkedin-blue);
+  outline: none;
+}
+
+/* === 7. CARDS & CONTAINERS === */
+.card-form, .article-card, .job-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.card-form:hover, .article-card:hover, .job-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* === 8. GRID SYSTEM === */
+.grid-3-col {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid-3-col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* === 9. FOOTER === */
+.footer {
+  border-top: 1px solid var(--border-color);
+  background-color: var(--card-background);
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.footer-content p {
+  font-size: 0.9rem;
+  color: var(--text-medium);
+}
+
+.footer-social {
+  display: flex;
+  gap: 20px;
+}
+
+.social-link svg {
+  stroke: var(--linkedin-blue);
+  transition: transform 0.3s, stroke 0.3s;
+}
+
+.social-link:hover svg {
+  transform: scale(1.1);
+  stroke: var(--primary-hover);
+}
+
+/* === 10. LIGHT THEME === */
+.light-theme {
+  --background-color: #ffffff;
+  --card-background: #f5f5f5;
+  --text-dark: #1a1a1a;
+  --text-medium: #333333;
+  --border-color: #d1d5db;
+}
+
+.light-theme header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+}
+
+.light-theme .logo-text {
+  color: #1a1a1a;
+}
+
+.light-theme .btn-secondary {
+  border-color: var(--linkedin-blue);
+  color: var(--linkedin-blue);
+}
+
+.light-theme .footer {
+  background-color: #f5f5f5;
+}
+
+.light-theme input,
+.light-theme select,
+.light-theme textarea {
+  background-color: #f5f5f5;
+  color: #000;
+  border-color: #ddd;
+}
+/* === NAVBAR USER PROFILE SECTION === */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.nav-user img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--linkedin-blue);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.3s;
+}
+
+.nav-user img:hover {
+  transform: scale(1.05);
+  border-color: var(--primary-hover);
+}
+
+.nav-username {
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+/* === PROFILE DROPDOWN === */
+.profile-dropdown {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  min-width: 160px;
+  z-index: 999;
+  padding: 10px 0;
+}
+
+.profile-dropdown a {
+  display: block;
+  padding: 10px 16px;
+  color: var(--text-medium);
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.profile-dropdown a:hover {
+  background-color: rgba(10, 102, 194, 0.1);
+  color: var(--text-dark);
+}
+
+/* Active (Visible) state */
+.nav-user.active .profile-dropdown {
+  display: block;
+}
+
+/* Light theme adjustments */
+.light-theme .profile-dropdown {
+  background-color: #fff;
+  border-color: #ddd;
+}
+
+.light-theme .nav-username {
+  color: #1a1a1a;
+}
+/* small devices */
+@media (max-width: 768px) {
+  .header-nav { padding: 10px 16px; }
+  .nav-links { display: none; } /* hide full nav, use hamburger later if you implement it */
+  .header-actions { gap: 6px; }
+  .page-content-wrapper { padding: 12px; }
+  .grid-3-col { grid-template-columns: 1fr; }
+  .profile-container { margin: 100px 12px; }
+  .card-form { padding: 16px; }
+}
+
+/* medium devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-3-col { grid-template-columns: repeat(2, 1fr); }
+}
+.message {
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+.message.error { color: red; }
+.message.success { color: green; }
+/* === UNIVERSAL RESPONSIVENESS ENHANCEMENTS === */
+
+/* 1️⃣ Viewport scaling & safe area padding */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  padding-top: 80px; /* keeps content below fixed navbar */
+  padding-bottom: env(safe-area-inset-bottom); /* iPhone notch safety */
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-dark);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* 2️⃣ Make all media auto-resize */
+img, video, iframe {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  display: block;
+  border-radius: 6px;
+}
+
+/* 3️⃣ Typography scaling */
+h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); }
+h2 { font-size: clamp(1.4rem, 4vw, 2rem); }
+p  { font-size: clamp(0.95rem, 2.8vw, 1.05rem); }
+
+/* 4️⃣ Container padding scaling */
+.page-content-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(12px, 3vw, 24px);
+}
+
+/* 5️⃣ Buttons adjust */
+.btn {
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 24px);
+  border-radius: 24px;
+}
+
+/* 6️⃣ Navbar mobile behavior - Now handled by hamburger-menu in responsive.css */
+/* Nav links shown on desktop, hidden on mobile (moved to dropdown) */
+@media (min-width: 769px) {
+  .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+}
+
+/* 7️⃣ Small phone fixes */
+@media (max-width: 480px) {
+  .btn {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  .card-form {
+    padding: 16px;
+  }
+
+  .hero-section h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-section p {
+    font-size: 0.9rem;
+  }
+}
+.suggestion-box {
+  position: absolute;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-top: 4px;
+  list-style: none;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 0;
+}
+
+.suggestion-box li {
+  padding: 10px;
+  cursor: pointer;
+  color: var(--text-dark);
+}
+
+.suggestion-box li:hover {
+  background-color: var(--linkedin-blue);
+  color: #fff;
+}
+
+.suggestion-box .no-result {
+  color: var(--text-medium);
+  cursor: default;
+}
+
+/* ============================================
+   INDEX PAGE MODERN STYLING
+   ============================================ */
+
+/* Enhanced Bouncing Logo Animation */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.logo-bounce svg {
+  animation: bounce 3s ease-in-out infinite, pulse 2s ease-in-out infinite;
+}
+
+.logo-bounce:hover svg {
+  animation: none;
+  transform: scale(1.15) rotate(5deg);
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Profile avatar styling */
+.profile-avatar-small {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--linkedin-blue);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.profile-avatar-small:hover {
+  transform: scale(1.1);
+}
+
+/* Hero Section Modern Styling */
+.hero-section {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, rgba(10, 102, 194, 0.1) 0%, rgba(47, 52, 61, 0.8) 100%);
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+.welcome-text {
+  font-size: 1.2rem;
+  color: var(--text-medium);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 20px 0;
+  background: linear-gradient(135deg, #0a66c2 0%, #5ba3d0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  color: var(--text-medium);
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-text {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.link-primary {
+  color: var(--linkedin-blue);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.link-primary:hover {
+  color: #5ba3d0;
+  text-decoration: underline;
+}
+
+/* Modern Search Bar */
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.search-input {
+  flex: 1;
+  padding: 16px 20px;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 50px;
+  background: var(--card-background);
+  color: var(--text-dark);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: var(--linkedin-blue);
+  box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--text-medium);
+}
+
+.btn-search {
+  padding: 16px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  background: var(--linkedin-blue);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-search:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
+}
+
+.btn-search:active {
+  transform: translateY(0);
+}
+
+/* Suggestions List */
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px auto 0;
+  max-width: 700px;
+  background: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.suggestions-list li {
+  padding: 14px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.2s ease;
+}
+
+.suggestions-list li:last-child {
+  border-bottom: none;
+}
+
+.suggestions-list li:hover {
+  background: rgba(10, 102, 194, 0.1);
+  color: var(--linkedin-blue);
+}
+
+/* Feature Cards Enhancement */
+.feature-card {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(10, 102, 194, 0.2);
+  border-color: var(--linkedin-blue);
+}
+
+.icon-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 102, 194, 0.1);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover .icon-wrapper {
+  background: rgba(10, 102, 194, 0.2);
+  transform: scale(1.1);
+}
+
+.icon-wrapper svg {
+  color: var(--linkedin-blue);
+}
+
+/* Grid Layout Improvements */
+.grid-3-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Ensure images fill containers properly */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.feature-section,
+.testimonial-section {
+  width: 100%;
+  padding: 40px 0;
+}
+
+.feature-section h2,
+.testimonial-section h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+/* Testimonial cards */
+.testimonial-card {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(10, 102, 194, 0.15);
+}
+
+.testimonial-card p {
+  font-style: italic;
+  margin-bottom: 15px;
+  color: var(--text-medium);
+}
+
+.testimonial-card cite {
+  font-weight: 600;
+  color: var(--linkedin-blue);
+  font-style: normal;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .search-bar-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-input {
+    width: 100%;
+  }
+  
+  .btn-search {
+    width: 100%;
+  }
+  
+  .grid-3-col {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+

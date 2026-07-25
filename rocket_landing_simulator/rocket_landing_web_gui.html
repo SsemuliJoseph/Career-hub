@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Rocket Soft Landing Simulator - Advanced Control System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151a33;
+            --bg-card: #1a1f3a;
+            --accent-blue: #00d4ff;
+            --accent-cyan: #00ffcc;
+            --accent-orange: #ff6b35;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a8c0;
+            --text-dim: #6b7280;
+            --glow-blue: rgba(0, 212, 255, 0.3);
+            --glow-green: rgba(0, 255, 136, 0.3);
+            --glow-red: rgba(255, 51, 102, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #0f1420 50%, var(--bg-primary) 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated background stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, var(--bg-secondary), var(--bg-card));
+            padding: 20px 40px;
+            border-bottom: 2px solid var(--accent-blue);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            text-shadow: 0 0 30px var(--glow-blue);
+        }
+
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1em;
+            margin-top: 5px;
+        }
+
+        /* Main container */
+        .container {
+            display: grid;
+            grid-template-columns: 380px 1fr 320px;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1920px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-blue);
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header .icon {
+            font-size: 1.5em;
+        }
+
+        /* Left Panel - Controls */
+        .control-panel {
+            max-height: 85vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-blue) var(--bg-secondary);
+        }
+
+        .control-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .control-panel::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 4px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        /* Slider controls */
+        .slider-group {
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .slider-label .name {
+            color: var(--text-secondary);
+        }
+
+        .slider-label .value {
+            color: var(--accent-orange);
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--bg-primary), var(--accent-blue));
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--glow-blue);
+            transition: all 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px var(--glow-blue);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px var(--glow-blue);
+        }
+
+        /* Radio buttons */
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .radio-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-option label {
+            display: block;
+            padding: 12px;
+            background: var(--bg-primary);
+            border: 2px solid var(--text-dim);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--glow-blue);
+            color: var(--bg-primary);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: var(--bg-primary);
+            box-shadow: 0 4px 15px var(--glow-green);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--glow-green);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--accent-orange), #ff8c5a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.5);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--accent-blue), #00a8cc);
+            color: white;
+            box-shadow: 0 4px 15px var(--glow-blue);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--glow-blue);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Center Panel - Visualization */
+        .visualization-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .status-bar {
+            background: var(--bg-secondary);
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-indicator.ready { background: var(--accent-green); }
+        .status-indicator.running { background: var(--accent-orange); }
+        .status-indicator.success { background: var(--accent-green); }
+        .status-indicator.failed { background: var(--accent-red); }
+
+        /* Canvas container */
+        .canvas-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 600px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-wrapper {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            position: relative;
+        }
+
+        .chart-wrapper.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-title {
+            font-size: 0.95em;
+            color: var(--accent-cyan);
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+        }
+
+        /* Right Panel - Results */
+        .results-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .metric-value.success { color: var(--accent-green); }
+        .metric-value.warning { color: var(--accent-orange); }
+        .metric-value.danger { color: var(--accent-red); }
+
+        .metric-unit {
+            font-size: 0.6em;
+            color: var(--text-dim);
+            margin-left: 5px;
+        }
+
+        /* Success badge */
+        .success-badge {
+            background: linear-gradient(135deg, var(--accent-green), #00cc66);
+            color: var(--bg-primary);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 4px 20px var(--glow-green);
+            animation: successPulse 1s ease-in-out;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .failed-badge {
+            background: linear-gradient(135deg, var(--accent-red), #ff5588);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 4px 20px var(--glow-red);
+        }
+
+        /* Rocket visualization */
+        .rocket-viz {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            padding: 20px;
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rocket {
+            position: absolute;
+            width: 40px;
+            height: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: bottom 0.3s ease-out;
+        }
+
+        .rocket-body {
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            box-shadow: 0 0 20px var(--glow-blue);
+        }
+
+        .rocket-nose {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid var(--accent-orange);
+            position: absolute;
+            top: -30px;
+            left: 0;
+        }
+
+        .rocket-fin {
+            width: 15px;
+            height: 20px;
+            background: var(--accent-blue);
+            position: absolute;
+            bottom: 0;
+        }
+
+        .rocket-fin.left {
+            left: -12px;
+            clip-path: polygon(0 100%, 100% 100%, 100% 0);
+        }
+
+        .rocket-fin.right {
+            right: -12px;
+            clip-path: polygon(0 100%, 100% 100%, 0 0);
+        }
+
+        .rocket-flame {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 35px;
+            background: linear-gradient(to bottom, var(--accent-orange), transparent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: flameFlicker 0.1s infinite;
+        }
+
+        .rocket-flame.active {
+            opacity: 1;
+        }
+
+        @keyframes flameFlicker {
+            0%, 100% { transform: translateX(-50%) scaleY(1); }
+            50% { transform: translateX(-50%) scaleY(0.8); }
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-green);
+            box-shadow: 0 0 10px var(--glow-green);
+        }
+
+        /* Info tooltip */
+        .info-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 5px;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--accent-blue);
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Equation display */
+        .equation-box {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 3px solid var(--accent-cyan);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            color: var(--accent-cyan);
+            overflow-x: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading animation */
+        .loader {
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated stars background -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>🚀 ROCKET SOFT LANDING SIMULATOR</h1>
+        <p class="subtitle">Advanced Control System | 2nd-Order ODE | Bang-Bang & PID Controllers | Real-Time Visualization</p>
+    </header>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Left Panel: Controls -->
+        <div class="card control-panel">
+            <div class="card-header">
+                <span class="icon">🎮</span>
+                CONTROL CENTER
+            </div>
+
+            <!-- Controller Selection -->
+            <div class="section">
+                <div class="section-title">🎯 Controller Type</div>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="bangbang" name="controller" value="bangbang" checked>
+                        <label for="bangbang">Bang-Bang</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="pid" name="controller" value="pid">
+                        <label for="pid">PID</label>
+                    </div>
+                </div>
+                <div class="equation-box" id="controllerEquation">
+                    T = T_max if v &lt; threshold else 0
+                </div>
+            </div>
+
+            <!-- Rocket Parameters -->
+            <div class="section">
+                <div class="section-title">🚀 Rocket Parameters</div>
+                
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Mass (kg)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Total mass of the rocket. Affects inertia and thrust-to-weight ratio. Typical: 500-2000 kg.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="massValue">1000</span>
+                    </div>
+                    <input type="range" id="mass" min="500" max="2000" value="1000" step="10">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Gravity (m/s²)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Gravitational acceleration. Earth=9.81, Moon=1.62, Mars=3.71 m/s²</span>
+                            </span>
+                        </span>
+                        <span class="value" id="gravityValue">9.81</span>
+                    </div>
+                    <input type="range" id="gravity" min="1" max="20" value="9.81" step="0.01">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Max Thrust (N)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Maximum engine power. Must be &gt; m*g to hover. Controls maximum deceleration capability.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="maxThrustValue">15000</span>
+                    </div>
+                    <input type="range" id="maxThrust" min="5000" max="30000" value="15000" step="100">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Initial Altitude (m)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Starting height above ground. Higher altitude = longer descent time and more fuel needed.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="altitudeValue">1000</span>
+                    </div>
+                    <input type="range" id="altitude" min="100" max="2000" value="1000" step="10">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Initial Velocity (m/s)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Starting descent speed (negative = downward). More negative = harder landing without control.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="velocityValue">-50</span>
+                    </div>
+                    <input type="range" id="velocity" min="-100" max="-10" value="-50" step="1">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Target Velocity (m/s)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Desired landing speed. -1 to -2 m/s is ideal for soft landing. More negative = harder impact.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="targetVelValue">-2</span>
+                    </div>
+                    <input type="range" id="targetVel" min="-5" max="-0.5" value="-2" step="0.1">
+                </div>
+            </div>
+
+            <!-- Bang-Bang Parameters -->
+            <div class="section" id="bangbangParams">
+                <div class="section-title">⚙️ Bang-Bang Parameters</div>
+                
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Velocity Threshold (m/s)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">When velocity &lt; threshold, thrust turns ON. More negative = later activation = riskier but fuel-efficient.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="thresholdValue">-10</span>
+                    </div>
+                    <input type="range" id="threshold" min="-30" max="-2" value="-10" step="0.5">
+                </div>
+            </div>
+
+            <!-- PID Parameters -->
+            <div class="section hidden" id="pidParams">
+                <div class="section-title">⚙️ PID Parameters</div>
+                
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Kp (Proportional)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Proportional gain. Responds to current error. Higher = faster response but may overshoot.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="kpValue">500</span>
+                    </div>
+                    <input type="range" id="kp" min="0" max="2000" value="500" step="10">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Ki (Integral)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Integral gain. Eliminates steady-state error. Too high causes overshoot and instability.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="kiValue">50</span>
+                    </div>
+                    <input type="range" id="ki" min="0" max="200" value="50" step="1">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span class="name">Kd (Derivative)
+                            <span class="tooltip">
+                                <span class="info-icon">?</span>
+                                <span class="tooltiptext">Derivative gain. Dampens oscillations and predicts future error. Higher = more stability.</span>
+                            </span>
+                        </span>
+                        <span class="value" id="kdValue">1000</span>
+                    </div>
+                    <input type="range" id="kd" min="0" max="3000" value="1000" step="10">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="section">
+                <div class="section-title">🎬 Actions</div>
+                <button class="btn btn-primary" id="runBtn" onclick="runSimulation()">
+                    <span>▶ RUN SIMULATION</span>
+                </button>
+                <button class="btn btn-secondary" onclick="resetSimulation()">
+                    <span>🔄 RESET</span>
+                </button>
+                <button class="btn btn-info" onclick="compareControllers()">
+                    <span>📊 COMPARE BOTH</span>
+                </button>
+            </div>
+
+            <!-- Differential Equations -->
+            <div class="section">
+                <div class="section-title">📐 Governing Equations</div>
+                <div class="equation-box">
+                    <strong>2nd-Order ODE:</strong><br>
+                    z''(t) = -g + T(t)/m
+                </div>
+                <div class="equation-box">
+                    <strong>State Space:</strong><br>
+                    dz/dt = v<br>
+                    dv/dt = -g + T/m
+                </div>
+                <div class="equation-box" id="pidEquation" style="display:none;">
+                    <strong>PID Control Law:</strong><br>
+                    T = mg + Kp·e + Ki·∫e·dt + Kd·de/dt<br>
+                    where e = v_target - v
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Visualization -->
+        <div class="visualization-panel">
+            <div class="card">
+                <div class="status-bar">
+                    <div class="status-item">
+                        <div class="status-indicator ready" id="statusIndicator"></div>
+                        <span id="statusText">Ready to simulate</span>
+                    </div>
+                    <div class="status-item">
+                        <span id="simTime">Time: 0.00s</span>
+                    </div>
+                    <div class="status-item">
+                        <span id="simProgress">Progress: 0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="flex: 1;">
+                <div class="canvas-container">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">📈 Altitude Profile</div>
+                        <canvas id="altitudeChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">📉 Velocity Profile</div>
+                        <canvas id="velocityChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper full-width">
+                        <div class="chart-title">🔥 Thrust Control Signal</div>
+                        <canvas id="thrustChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">🌀 Phase Portrait</div>
+                        <canvas id="phaseChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">🚀 Rocket Animation</div>
+                        <div class="rocket-viz">
+                            <div class="rocket" id="rocketViz">
+                                <div class="rocket-nose"></div>
+                                <div class="rocket-body">
+                                    <div class="rocket-fin left"></div>
+                                    <div class="rocket-fin right"></div>
+                                </div>
+                                <div class="rocket-flame" id="rocketFlame"></div>
+                            </div>
+                            <div class="ground"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Results -->
+        <div class="results-panel">
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📊</span>
+                    TELEMETRY
+                </div>
+
+                <div id="resultsContent">
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
+                        <p style="font-size: 3em;">🚀</p>
+                        <p>Run simulation to see results</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">🎓</span>
+                    THEORY
+                </div>
+                <div style="font-size: 0.9em; line-height: 1.6; color: var(--text-secondary);">
+                    <p style="margin-bottom: 10px;"><strong style="color: var(--accent-cyan);">2nd-Order ODE:</strong></p>
+                    <p style="margin-bottom: 15px;">The rocket motion is governed by Newton's second law: F = ma, giving us z''(t) = -g + T(t)/m</p>
+                    
+                    <p style="margin-bottom: 10px;"><strong style="color: var(--accent-cyan);">State Variables:</strong></p>
+                    <p style="margin-bottom: 15px;">z = altitude (position)<br>v = velocity (dz/dt)<br>a = acceleration (dv/dt)</p>
+                    
+                    <p style="margin-bottom: 10px;"><strong style="color: var(--accent-cyan);">Control Strategies:</strong></p>
+                    <p style="margin-bottom: 10px;"><strong>Bang-Bang:</strong> Binary ON/OFF control based on velocity threshold. Simple but can oscillate.</p>
+                    <p><strong>PID:</strong> Smooth continuous control using Proportional, Integral, and Derivative terms for optimal performance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Generate animated stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 2 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+
+        // Slider value updates
+        const sliders = {
+            mass: 'massValue',
+            gravity: 'gravityValue',
+            maxThrust: 'maxThrustValue',
+            altitude: 'altitudeValue',
+            velocity: 'velocityValue',
+            targetVel: 'targetVelValue',
+            threshold: 'thresholdValue',
+            kp: 'kpValue',
+            ki: 'kiValue',
+            kd: 'kdValue'
+        };
+
+        Object.keys(sliders).forEach(id => {
+            const slider = document.getElementById(id);
+            const display = document.getElementById(sliders[id]);
+            slider.addEventListener('input', (e) => {
+                display.textContent = parseFloat(e.target.value).toFixed(2);
+            });
+        });
+
+        // Controller type change
+        document.querySelectorAll('input[name="controller"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const bangbangParams = document.getElementById('bangbangParams');
+                const pidParams = document.getElementById('pidParams');
+                const pidEquation = document.getElementById('pidEquation');
+                const controllerEquation = document.getElementById('controllerEquation');
+                
+                if (e.target.value === 'bangbang') {
+                    bangbangParams.classList.remove('hidden');
+                    pidParams.classList.add('hidden');
+                    pidEquation.style.display = 'none';
+                    controllerEquation.innerHTML = 'T = T_max if v &lt; threshold else 0';
+                } else {
+                    bangbangParams.classList.add('hidden');
+                    pidParams.classList.remove('hidden');
+                    pidEquation.style.display = 'block';
+                    controllerEquation.innerHTML = 'T = mg + Kp·(v_target-v) + Ki·∫e·dt + Kd·de/dt';
+                }
+            });
+        });
+
+        // Initialize charts
+        const chartConfig = {
+            type: 'line',
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { 
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#a0a8c0' }
+                    },
+                    y: { 
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#a0a8c0' }
+                    }
+                }
+            }
+        };
+
+        let charts = {};
+        ['altitude', 'velocity', 'thrust', 'phase'].forEach(name => {
+            const ctx = document.getElementById(name + 'Chart').getContext('2d');
+            charts[name] = new Chart(ctx, {
+                ...chartConfig,
+                data: { datasets: [] }
+            });
+        });
+
+        // Simulation state
+        let simulationRunning = false;
+        let animationFrame = null;
+
+        // Physics simulation
+        function runSimulation() {
+            if (simulationRunning) return;
+            
+            simulationRunning = true;
+            const runBtn = document.getElementById('runBtn');
+            runBtn.disabled = true;
+            runBtn.innerHTML = '<span>⏳ SIMULATING...</span>';
+            
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            statusIndicator.className = 'status-indicator running';
+            statusText.textContent = 'Simulation running...';
+            
+            // Get parameters
+            const params = {
+                m: parseFloat(document.getElementById('mass').value),
+                g: parseFloat(document.getElementById('gravity').value),
+                T_max: parseFloat(document.getElementById('maxThrust').value),
+                z0: parseFloat(document.getElementById('altitude').value),
+                v0: parseFloat(document.getElementById('velocity').value),
+                v_target: parseFloat(document.getElementById('targetVel').value),
+                controller: document.querySelector('input[name="controller"]:checked').value,
+                threshold: parseFloat(document.getElementById('threshold').value),
+                Kp: parseFloat(document.getElementById('kp').value),
+                Ki: parseFloat(document.getElementById('ki').value),
+                Kd: parseFloat(document.getElementById('kd').value)
+            };
+            
+            // Run simulation
+            setTimeout(() => {
+                const results = simulate(params);
+                displayResults(results);
+                plotResults(results);
+                animateRocket(results);
+                
+                simulationRunning = false;
+                runBtn.disabled = false;
+                runBtn.innerHTML = '<span>▶ RUN SIMULATION</span>';
+                
+                statusIndicator.className = results.success ? 'status-indicator success' : 'status-indicator failed';
+                statusText.textContent = results.success ? '✓ Landing successful' : '✗ Landing failed';
+            }, 100);
+        }
+
+        // RK4 integration method
+        function simulate(params) {
+            const dt = 0.05;
+            const t_max = 100;
+            
+            let t = 0;
+            let z = params.z0;
+            let v = params.v0;
+            let integral_error = 0;
+            let prev_error = 0;
+            
+            const time = [0];
+            const altitude = [z];
+            const velocity = [v];
+            const thrust = [0];
+            
+            while (t < t_max && z > 0) {
+                // Compute thrust using selected controller
+                let T;
+                if (params.controller === 'bangbang') {
+                    T = v < params.threshold ? params.T_max : 0;
+                } else {
+                    // PID controller
+                    const z_factor = z > 500 ? (z / params.z0) * 10 : Math.sqrt(Math.max(z / 100, 0.01));
+                    const v_target_adaptive = params.v_target * z_factor;
+                    const error = v_target_adaptive - v;
+                    
+                    integral_error += error * dt;
+                    const derivative = (error - prev_error) / dt;
+                    
+                    const baseline = params.m * params.g;
+                    T = baseline + params.Kp * error + params.Ki * integral_error + params.Kd * derivative;
+                    T = Math.max(0, Math.min(params.T_max, T));
+                    
+                    prev_error = error;
+                }
+                
+                // RK4 integration
+                const f = (z_val, v_val, T_val) => {
+                    const a = -params.g + T_val / params.m;
+                    return { dz: v_val, dv: a };
+                };
+                
+                const k1 = f(z, v, T);
+                const k2 = f(z + 0.5*dt*k1.dz, v + 0.5*dt*k1.dv, T);
+                const k3 = f(z + 0.5*dt*k2.dz, v + 0.5*dt*k2.dv, T);
+                const k4 = f(z + dt*k3.dz, v + dt*k3.dv, T);
+                
+                z += (dt/6) * (k1.dz + 2*k2.dz + 2*k3.dz + k4.dz);
+                v += (dt/6) * (k1.dv + 2*k2.dv + 2*k3.dv + k4.dv);
+                t += dt;
+                
+                time.push(t);
+                altitude.push(Math.max(0, z));
+                velocity.push(v);
+                thrust.push(T);
+                
+                if (z <= 0) break;
+            }
+            
+            // Calculate metrics
+            const landing_time = time[time.length - 1];
+            const landing_velocity = velocity[velocity.length - 1];
+            const landing_altitude = altitude[altitude.length - 1];
+            const fuel_used = thrust.reduce((sum, T, i) => sum + T * dt, 0);
+            const success = Math.abs(landing_altitude) < 1 && Math.abs(landing_velocity) < 5;
+            
+            let rating = '✗ FAILED';
+            if (success) {
+                if (Math.abs(landing_velocity) < 2) rating = '⭐⭐⭐ EXCELLENT';
+                else if (Math.abs(landing_velocity) < 4) rating = '⭐⭐ GOOD';
+                else rating = '⭐ OK';
+            }
+            
+            return {
+                time, altitude, velocity, thrust,
+                landing_time, landing_velocity, landing_altitude, fuel_used,
+                success, rating
+            };
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('resultsContent');
+            
+            const badgeClass = results.success ? 'success-badge' : 'failed-badge';
+            const badgeText = results.success ? '✓ LANDING SUCCESS' : '✗ CRASH DETECTED';
+            
+            container.innerHTML = `
+                <div class="${badgeClass}" style="margin-bottom: 20px;">
+                    ${badgeText}
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Landing Time</div>
+                    <div class="metric-value success">
+                        ${results.landing_time.toFixed(2)}<span class="metric-unit">s</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Landing Velocity</div>
+                    <div class="metric-value ${Math.abs(results.landing_velocity) < 3 ? 'success' : 'warning'}">
+                        ${results.landing_velocity.toFixed(2)}<span class="metric-unit">m/s</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Final Altitude</div>
+                    <div class="metric-value ${Math.abs(results.landing_altitude) < 1 ? 'success' : 'danger'}">
+                        ${results.landing_altitude.toFixed(2)}<span class="metric-unit">m</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Fuel Consumed</div>
+                    <div class="metric-value warning">
+                        ${(results.fuel_used/1000).toFixed(1)}<span class="metric-unit">kN·s</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Performance Rating</div>
+                    <div class="metric-value" style="font-size: 1.3em; color: var(--accent-cyan);">
+                        ${results.rating}
+                    </div>
+                </div>
+            `;
+        }
+
+        function plotResults(results) {
+            // Altitude chart
+            charts.altitude.data = {
+                labels: results.time,
+                datasets: [{
+                    data: results.altitude,
+                    borderColor: '#00d4ff',
+                    backgroundColor: 'rgba(0, 212, 255, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
+            };
+            charts.altitude.options.scales.y.title = { display: true, text: 'Altitude (m)', color: '#a0a8c0' };
+            charts.altitude.options.scales.x.title = { display: true, text: 'Time (s)', color: '#a0a8c0' };
+            charts.altitude.update();
+            
+            // Velocity chart
+            charts.velocity.data = {
+                labels: results.time,
+                datasets: [{
+                    data: results.velocity,
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
+            };
+            charts.velocity.options.scales.y.title = { display: true, text: 'Velocity (m/s)', color: '#a0a8c0' };
+            charts.velocity.options.scales.x.title = { display: true, text: 'Time (s)', color: '#a0a8c0' };
+            charts.velocity.update();
+            
+            // Thrust chart
+            charts.thrust.data = {
+                labels: results.time,
+                datasets: [{
+                    data: results.thrust.map(t => t/1000),
+                    borderColor: '#00ff88',
+                    backgroundColor: 'rgba(0, 255, 136, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
+            };
+            charts.thrust.options.scales.y.title = { display: true, text: 'Thrust (kN)', color: '#a0a8c0' };
+            charts.thrust.options.scales.x.title = { display: true, text: 'Time (s)', color: '#a0a8c0' };
+            charts.thrust.update();
+            
+            // Phase portrait
+            charts.phase.data = {
+                labels: results.altitude,
+                datasets: [{
+                    data: results.altitude.map((z, i) => ({ x: z, y: results.velocity[i] })),
+                    borderColor: '#00ffcc',
+                    backgroundColor: 'rgba(0, 255, 204, 0.1)',
+                    showLine: true,
+                    pointRadius: 1,
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
+            };
+            charts.phase.options.scales.y.title = { display: true, text: 'Velocity (m/s)', color: '#a0a8c0' };
+            charts.phase.options.scales.x.title = { display: true, text: 'Altitude (m)', color: '#a0a8c0' };
+            charts.phase.update();
+        }
+
+        function animateRocket(results) {
+            const rocket = document.getElementById('rocketViz');
+            const flame = document.getElementById('rocketFlame');
+            const maxHeight = 200; // pixels
+            
+            let frame = 0;
+            const fps = 20;
+            const frameDelay = 1000 / fps;
+            
+            function animate() {
+                if (frame >= results.altitude.length) {
+                    flame.classList.remove('active');
+                    return;
+                }
+                
+                const z = results.altitude[frame];
+                const z_max = results.altitude[0];
+                const heightPercent = (z / z_max) * maxHeight;
+                
+                rocket.style.bottom = heightPercent + 'px';
+                
+                // Show flame if thrust is active
+                if (results.thrust[frame] > 0) {
+                    flame.classList.add('active');
+                } else {
+                    flame.classList.remove('active');
+                }
+                
+                // Update time display
+                document.getElementById('simTime').textContent = `Time: ${results.time[frame].toFixed(2)}s`;
+                document.getElementById('simProgress').textContent = `Progress: ${Math.round((frame/results.altitude.length)*100)}%`;
+                
+                frame++;
+                setTimeout(animate, frameDelay);
+            }
+            
+            animate();
+        }
+
+        function resetSimulation() {
+            location.reload();
+        }
+
+        function compareControllers() {
+            alert('Comparison mode will run both Bang-Bang and PID controllers and display side-by-side results. This feature requires the Python backend for optimal performance.');
+        }
+    </script>
+</body>
+</html>

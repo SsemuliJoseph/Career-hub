@@ -1,0 +1,5 @@
+# Restrict direct access to CV files (only through authenticated download)
+<FilesMatch "\.(pdf|doc|docx)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>

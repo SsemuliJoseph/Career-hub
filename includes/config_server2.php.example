@@ -1,0 +1,59 @@
+<?php
+/**
+ * Server 2 Configuration - Employer & Admin Module
+ * 
+ * INSTRUCTIONS:
+ * 1. Copy this file to config_server2.php
+ * 2. Update the IP addresses with your actual server IPs
+ * 3. Use the SAME API_SECRET_KEY as Server 1
+ */
+
+// ========================================
+// LOCAL DATABASE CONFIGURATION
+// ========================================
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'uniconnect_db');
+
+// ========================================
+// SERVER 1 CONNECTION (Student & Jobs)
+// ========================================
+// Replace 192.168.1.100 with Server 1's actual IP address
+define('SERVER1_URL', 'http://192.168.1.100');
+define('SERVER1_API', 'http://192.168.1.100/api');
+
+// Remote Database (Server 1) - for direct database queries if needed
+define('DB1_HOST', '192.168.1.100');
+define('DB1_USER', 'remote_user');
+define('DB1_PASS', 'password123');
+define('DB1_NAME', 'uniconnect_db');
+
+// ========================================
+// SERVER IDENTIFICATION
+// ========================================
+define('SERVER_ROLE', 'EMPLOYER_ADMIN');
+define('SERVER_ID', 2);
+
+// ========================================
+// SECURITY
+// ========================================
+// IMPORTANT: This MUST be the SAME as Server 1's API_SECRET_KEY!
+define('API_SECRET_KEY', 'CHANGE_THIS_TO_SECURE_RANDOM_STRING_12345');
+
+// ========================================
+// FEATURES ENABLED ON THIS SERVER
+// ========================================
+define('ENABLE_STUDENT_MODULE', false);
+define('ENABLE_JOBS_MODULE', false);
+define('ENABLE_EMPLOYER_MODULE', true);
+define('ENABLE_ADMIN_MODULE', true);
+
+// ========================================
+// CROSS-SERVER SYNC SETTINGS
+// ========================================
+define('AUTO_SYNC_ENABLED', true);
+define('SYNC_INTERVAL', 300); // seconds (5 minutes)
+define('CACHE_ENABLED', true);
+define('CACHE_DURATION', 600); // seconds (10 minutes)
+?>

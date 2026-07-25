@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Notification Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover { background: #45a049; }
+        button.secondary { background: #2196F3; }
+        button.secondary:hover { background: #0b7dda; }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        h1 { color: #333; }
+        h2 { color: #555; font-size: 18px; margin-top: 0; }
+        .note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔔 WebSocket Notification Tester</h1>
+    
+    <div class="note">
+        <strong>Note:</strong> You must be logged in as an admin or student. Open this page and the student dashboard side-by-side to see notifications appear in real-time.
+    </div>
+    
+    <div class="panel">
+        <h2>Quick Send (No CSRF needed)</h2>
+        <button onclick="sendQuickNotification('jobs', 'New Job Posted!', 'A new Software Engineer position is now available.')">
+            Send: New Job Notification
+        </button>
+        <button onclick="sendQuickNotification('applications', 'Application Update', 'Your application status has been updated to Interview.')">
+            Send: Application Status
+        </button>
+        <button onclick="sendQuickNotification('notifications', 'Welcome!', 'Welcome to Career Hub real-time notifications.')">
+            Send: General Notification
+        </button>
+    </div>
+    
+    <div class="panel">
+        <h2>Custom Notification</h2>
+        <label>Channel:</label>
+        <select id="channel">
+            <option value="jobs">jobs</option>
+            <option value="applications">applications</option>
+            <option value="notifications">notifications</option>
+        </select>
+        
+        <label>Title:</label>
+        <input type="text" id="title" placeholder="Notification Title" value="Custom Alert">
+        
+        <label>Message:</label>
+        <textarea id="message" rows="3" placeholder="Notification message">This is a custom notification message.</textarea>
+        
+        <label>User ID (optional, leave empty for channel broadcast):</label>
+        <input type="number" id="userId" placeholder="Leave empty for all">
+        
+        <button onclick="sendCustomNotification()">Send Custom Notification</button>
+    </div>
+    
+    <div class="panel">
+        <h2>Response Log</h2>
+        <div id="log"></div>
+    </div>
+    
+    <div class="panel">
+        <h2>How It Works</h2>
+        <ol>
+            <li><strong>Start WebSocket Server:</strong> Run <code>start_websocket.bat</code></li>
+            <li><strong>Open Student Dashboard:</strong> Navigate to <code>pages/student.php</code></li>
+            <li><strong>Send Notifications:</strong> Click buttons above</li>
+            <li><strong>Watch Dashboard:</strong> Notifications appear as toast messages in the top-right corner</li>
+        </ol>
+        
+        <h3>What to Look For:</h3>
+        <ul>
+            <li>✅ WebSocket status indicator shows "Live" (green dot)</li>
+            <li>✅ Toast notification slides in from right</li>
+            <li>✅ Browser console shows notification received</li>
+            <li>✅ Server console shows "Broadcasting to channel: X"</li>
+        </ul>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `status ${type}`;
+            entry.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            logDiv.insertBefore(entry, logDiv.firstChild);
+        }
+        
+        async function sendQuickNotification(channel, title, message) {
+            sendNotification({
+                channel,
+                title,
+                message
+            });
+        }
+        
+        async function sendCustomNotification() {
+            const channel = document.getElementById('channel').value;
+            const title = document.getElementById('title').value;
+            const message = document.getElementById('message').value;
+            const userId = document.getElementById('userId').value;
+            
+            const payload = { channel, title, message };
+            if (userId) payload.userId = parseInt(userId);
+            
+            sendNotification(payload);
+        }
+        
+        async function sendNotification(data) {
+            log('Sending notification...', 'info');
+            
+            try {
+                // Get CSRF token from a form if available, otherwise skip for demo
+                const csrfToken = document.querySelector('[name=csrf_token]')?.value || '';
+                
+                const formData = new URLSearchParams();
+                formData.append('channel', data.channel);
+                formData.append('message', data.message);
+                if (data.title) formData.append('title', data.title);
+                if (data.userId) formData.append('userId', data.userId);
+                if (csrfToken) formData.append('csrf_token', csrfToken);
+                
+                const response = await fetch('/career_hub/api/v1/notify.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    credentials: 'include',
+                    body: formData.toString()
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    log(`✓ Notification queued successfully! Channel: ${data.channel}`, 'success');
+                    log(`Response: ${JSON.stringify(result)}`, 'info');
+                } else {
+                    log(`✗ Error: ${result.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                log(`✗ Request failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-log on load
+        window.addEventListener('load', () => {
+            log('Page loaded. Ready to send notifications.', 'success');
+            log('Make sure WebSocket server is running on port 8080', 'info');
+        });
+    </script>
+</body>
+</html>

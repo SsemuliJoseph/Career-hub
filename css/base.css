@@ -1,0 +1,70 @@
+/**
+ * base.css - Utility Classes Library
+ * 
+ * Teaching notes: This file contains reusable utility classes for common styling needs.
+ * Benefits of utility classes:
+ * - Rapid prototyping: Add classes directly to HTML without writing custom CSS
+ * - Consistency: Predefined spacing/sizing values maintain design system
+ * - Reduced CSS bloat: Reuse same classes across project instead of duplicating styles
+ * - Similar to Tailwind CSS but simplified
+ * 
+ * Usage examples:
+ * <div class="hidden">Not visible</div>
+ * <p class="text-center mt-2">Centered text with top margin</p>
+ * <button class="p-4 mb-2">Padded button with bottom margin</button>
+ * 
+ * CSS concepts demonstrated:
+ * - Class selectors: .classname { property: value; }
+ * - Display properties: none (hidden), block (visible as block element)
+ * - Text alignment: center, left, right
+ * - Box model: margin (space outside element), padding (space inside element)
+ * - Shorthand: margin-top (mt), margin-bottom (mb), padding (p)
+ * - Spacing scale: 2 = 8px, 4 = 16px (common 4px/8px grid system)
+ */
+
+/* 
+ * Visibility utilities
+ * - display: none removes element from layout (not rendered, no space taken)
+ * - display: block makes element visible as block-level (full width, new line)
+ * Use cases: Toggle visibility with JavaScript, responsive hide/show
+ */
+.hidden { display: none; }
+.show { display: block; }
+
+/**
+ * Text alignment utilities
+ * - text-align: center centers inline content horizontally
+ * - Works on text, inline images, inline-block elements
+ * - Does NOT center block elements (use margin: 0 auto for that)
+ */
+.text-center { text-align: center; }
+
+/**
+ * Margin utilities (space outside element borders)
+ * - margin-top: 8px adds space above element
+ * - margin-bottom: 8px adds space below element
+ * - mt = margin-top abbreviation (common in utility frameworks)
+ * - mb = margin-bottom abbreviation
+ * - Scale: 2 = 8px (based on 4px base unit: 2 × 4px = 8px)
+ * 
+ * Why 8px spacing system?
+ * - Divisible by 2 and 4 (easy to scale: 4px, 8px, 16px, 24px, 32px)
+ * - Large enough to be visible, small enough for fine control
+ * - Industry standard (Material Design, Bootstrap, Tailwind use 4px/8px grids)
+ */
+.mt-2 { margin-top: 8px; }
+.mb-2 { margin-bottom: 8px; }
+
+/**
+ * Padding utility (space inside element borders, before content)
+ * - padding: 16px adds equal space on all four sides (top, right, bottom, left)
+ * - p-4 = padding of 4 units = 16px (4 × 4px base unit)
+ * - Padding expands element size (unless box-sizing: border-box is set)
+ * - Use for button spacing, card content spacing, clickable areas
+ * 
+ * Padding vs Margin:
+ * - Padding: inside element (expands background/border area)
+ * - Margin: outside element (transparent gap between elements)
+ * - Padding respects background color, margin doesn't
+ */
+.p-4 { padding: 16px; }

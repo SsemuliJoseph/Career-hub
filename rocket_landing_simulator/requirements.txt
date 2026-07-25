@@ -1,0 +1,48 @@
+# Python Dependencies for Advanced Rocket Landing Simulator v2.0
+
+# Core Dependencies
+numpy>=1.21.0
+scipy>=1.7.0
+matplotlib>=3.4.0
+
+# Machine Learning (Optional but Recommended)
+# Uncomment to enable ML features
+# numba>=0.54.0          # JIT compilation for 10-100x speedup
+# cupy-cuda11x>=9.0.0    # GPU acceleration (optional, CUDA required)
+
+# Performance Profiling
+# psutil>=5.8.0          # System resource monitoring
+
+# Development Tools (Optional)
+# jupyter>=1.0.0         # Jupyter notebook support
+# ipython>=7.0.0         # Enhanced Python shell
+
+# Installation Instructions:
+# 
+# 1. Basic Installation (Required):
+#    pip install numpy scipy matplotlib
+#
+# 2. With Machine Learning (Recommended):
+#    pip install numpy scipy matplotlib numba
+#
+# 3. With GPU Support (Advanced):
+#    pip install numpy scipy matplotlib numba cupy-cuda11x
+#    Note: Requires NVIDIA GPU with CUDA 11.x installed
+#
+# 4. Full Development Environment:
+#    pip install -r requirements.txt
+#    pip install numba jupyter ipython
+
+# Platform-Specific Notes:
+# 
+# Windows:
+#   - All packages work out-of-the-box
+#   - For GPU: Install CUDA Toolkit 11.x from NVIDIA
+#
+# macOS:
+#   - CuPy not available (no NVIDIA GPUs)
+#   - Use numba for acceleration instead
+#
+# Linux:
+#   - All features supported
+#   - For GPU: Install nvidia-cuda-toolkit

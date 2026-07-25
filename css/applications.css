@@ -1,0 +1,186 @@
+/**
+ * APPLICATIONS.CSS - Job Applications Management Styles
+ * TEACHING NOTES:
+ * - Grid layout for application cards with status indicators
+ * - Color-coded status badges (pending, accepted, rejected)
+ * - Responsive card design with job info and applicant details
+ * - Clean typography and spacing for professional appearance
+ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.applications-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.application-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.job-info {
+  margin-bottom: 1rem;
+}
+
+.job-info h3 {
+  margin: 0;
+  color: var(--gray-900);
+}
+
+.company {
+  color: var(--gray-600);
+  font-size: 0.875rem;
+}
+
+.application-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status.pending {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.status.reviewed {
+  background: var(--primary);
+  color: white;
+}
+
+.status.interviewed {
+  background: var(--accent);
+  color: white;
+}
+
+.status.accepted {
+  background: var(--success);
+  color: white;
+}
+
+.status.rejected {
+  background: var(--danger);
+  color: white;
+}
+
+.date {
+  color: var(--gray-500);
+  font-size: 0.875rem;
+}
+
+.timeline {
+  display: flex;
+  align-items: center;
+  margin: 2rem 0;
+  padding: 0 1rem;
+}
+
+.timeline-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.step-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  margin-bottom: 0.5rem;
+}
+
+.timeline-step.active .step-indicator {
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.timeline-line {
+  flex: 1;
+  height: 2px;
+  background: var(--gray-200);
+  margin: 0 0.5rem;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.step-date {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+.application-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.empty-state h3 {
+  margin-bottom: 0.5rem;
+  color: var(--gray-900);
+}
+
+.empty-state p {
+  color: var(--gray-600);
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .timeline {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .timeline-line {
+    width: 2px;
+    height: 20px;
+    margin: 0.5rem 0;
+  }
+
+  .application-actions {
+    flex-direction: column;
+  }
+}

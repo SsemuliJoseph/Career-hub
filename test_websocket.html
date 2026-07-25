@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test - Career Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4CAF50;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .status.disconnected { background: #ffebee; color: #c62828; }
+        .status.connecting { background: #fff3e0; color: #ef6c00; }
+        .status.connected { background: #e8f5e9; color: #2e7d32; }
+        
+        .panel {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        .panel h2 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover { background: #45a049; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        button.danger { background: #f44336; }
+        button.danger:hover { background: #da190b; }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        
+        #messageLog {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 5px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 3px solid #4CAF50;
+            padding-left: 10px;
+        }
+        .log-entry.error { border-color: #f44336; color: #ff8a80; }
+        .log-entry.info { border-color: #2196F3; color: #82b1ff; }
+        .log-entry.success { border-color: #4CAF50; color: #b9f6ca; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        
+        .stat {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 WebSocket Server Test Console</h1>
+        
+        <div id="connectionStatus" class="status disconnected">
+            ⚫ Disconnected
+        </div>
+        
+        <div class="grid">
+            <div class="stat">
+                <div class="stat-label">Messages Received</div>
+                <div class="stat-value" id="msgCount">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Messages Sent</div>
+                <div class="stat-value" id="sentCount">0</div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>Connection Control</h2>
+            <button id="connectBtn" onclick="connect()">Connect to WebSocket</button>
+            <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+        
+        <div class="panel">
+            <h2>Test Actions</h2>
+            <div class="grid">
+                <div>
+                    <h3 style="margin-bottom: 10px; color: #666;">Channel Subscriptions</h3>
+                    <button onclick="subscribe('jobs')" disabled class="test-btn">Subscribe: jobs</button>
+                    <button onclick="subscribe('applications')" disabled class="test-btn">Subscribe: applications</button>
+                    <button onclick="subscribe('notifications')" disabled class="test-btn">Subscribe: notifications</button>
+                    <button onclick="unsubscribe('jobs')" disabled class="test-btn danger">Unsubscribe: jobs</button>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 10px; color: #666;">Send Test Messages</h3>
+                    <button onclick="sendPing()" disabled class="test-btn">Send Ping</button>
+                    <button onclick="sendTestMessage()" disabled class="test-btn">Send Test Message</button>
+                    <button onclick="sendCustomMessage()" disabled class="test-btn">Custom Message</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>Custom Message</h2>
+            <textarea id="customMsg" rows="3" placeholder='{"type":"message","data":"hello"}'></textarea>
+            <button onclick="sendRaw()" disabled class="test-btn">Send Raw JSON</button>
+        </div>
+        
+        <div class="panel">
+            <h2>Message Log</h2>
+            <div id="messageLog"></div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let msgCount = 0;
+        let sentCount = 0;
+        const WS_URL = 'ws://localhost:8080';
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('messageLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(status, text) {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.className = `status ${status}`;
+            const icons = { disconnected: '⚫', connecting: '🟡', connected: '🟢' };
+            statusDiv.textContent = `${icons[status]} ${text}`;
+        }
+        
+        function updateButtons(connected) {
+            document.getElementById('connectBtn').disabled = connected;
+            document.getElementById('disconnectBtn').disabled = !connected;
+            document.querySelectorAll('.test-btn').forEach(btn => {
+                btn.disabled = !connected;
+            });
+        }
+        
+        async function getAuthToken() {
+            try {
+                const response = await fetch('/career_hub/api/auth/ws_token.php', {
+                    credentials: 'include'
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.token) {
+                    log('✓ Auth token obtained', 'success');
+                    return data.token;
+                }
+                throw new Error('No token in response');
+            } catch (error) {
+                log(`✗ Failed to get auth token: ${error.message}`, 'error');
+                return null;
+            }
+        }
+        
+        async function connect() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                log('Already connected', 'info');
+                return;
+            }
+            
+            updateStatus('connecting', 'Connecting...');
+            log('Getting auth token...', 'info');
+            
+            const token = await getAuthToken();
+            if (!token) {
+                updateStatus('disconnected', 'Failed to get auth token');
+                return;
+            }
+            
+            const wsUrl = `${WS_URL}?token=${token}`;
+            log(`Connecting to ${WS_URL}...`, 'info');
+            
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                log('✓ WebSocket connection established!', 'success');
+                updateStatus('connected', 'Connected');
+                updateButtons(true);
+                
+                // Auto-subscribe to a test channel
+                setTimeout(() => subscribe('jobs'), 500);
+            };
+            
+            ws.onmessage = (event) => {
+                msgCount++;
+                document.getElementById('msgCount').textContent = msgCount;
+                
+                try {
+                    const data = JSON.parse(event.data);
+                    log(`⬅️ Received: ${JSON.stringify(data)}`, 'info');
+                    
+                    if (data.type === 'notification') {
+                        log(`📬 Notification: ${data.message || JSON.stringify(data.data)}`, 'success');
+                    }
+                } catch (e) {
+                    log(`⬅️ Received (raw): ${event.data}`, 'info');
+                }
+            };
+            
+            ws.onerror = (error) => {
+                log(`✗ WebSocket error: ${error.message || 'Unknown error'}`, 'error');
+            };
+            
+            ws.onclose = (event) => {
+                log(`Connection closed (code: ${event.code}, reason: ${event.reason || 'none'})`, 'info');
+                updateStatus('disconnected', 'Disconnected');
+                updateButtons(false);
+                ws = null;
+            };
+        }
+        
+        function disconnect() {
+            if (ws) {
+                log('Closing connection...', 'info');
+                ws.close();
+            }
+        }
+        
+        function send(data) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('✗ Not connected', 'error');
+                return;
+            }
+            
+            const message = typeof data === 'string' ? data : JSON.stringify(data);
+            ws.send(message);
+            sentCount++;
+            document.getElementById('sentCount').textContent = sentCount;
+            log(`➡️ Sent: ${message}`, 'success');
+        }
+        
+        function subscribe(channel) {
+            send({ type: 'subscribe', channel });
+        }
+        
+        function unsubscribe(channel) {
+            send({ type: 'unsubscribe', channel });
+        }
+        
+        function sendPing() {
+            send({ type: 'ping' });
+        }
+        
+        function sendTestMessage() {
+            send({
+                type: 'message',
+                data: {
+                    test: true,
+                    timestamp: new Date().toISOString(),
+                    random: Math.random()
+                }
+            });
+        }
+        
+        function sendCustomMessage() {
+            const msg = document.getElementById('customMsg').value.trim();
+            if (!msg) {
+                log('✗ Custom message is empty', 'error');
+                return;
+            }
+            try {
+                JSON.parse(msg); // validate
+                send(msg);
+            } catch (e) {
+                log(`✗ Invalid JSON: ${e.message}`, 'error');
+            }
+        }
+        
+        function sendRaw() {
+            sendCustomMessage();
+        }
+        
+        function clearLog() {
+            document.getElementById('messageLog').innerHTML = '';
+            msgCount = 0;
+            sentCount = 0;
+            document.getElementById('msgCount').textContent = '0';
+            document.getElementById('sentCount').textContent = '0';
+        }
+        
+        // Auto-connect on load (optional, comment out if you prefer manual)
+        // window.addEventListener('load', () => setTimeout(connect, 1000));
+    </script>
+</body>
+</html>

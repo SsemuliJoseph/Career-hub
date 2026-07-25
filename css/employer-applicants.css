@@ -1,0 +1,52 @@
+/**
+ * EMPLOYER-APPLICANTS.CSS - Employer Applicants View Styles
+ * TEACHING NOTES:
+ * - Card-based layout for displaying job applicants
+ * - Modal dialog for viewing full applicant details
+ * - Hover animations (translateY) for better UX
+ * - Uses CSS variables for theme compatibility
+ */
+
+  .card {
+      background: var(--card-bg, #fff);
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 10px 0;
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: translateY(-3px); }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background: var(--modal-bg, #fff);
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+    }
+    .close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .no-applicants {
+      text-align: center;
+      padding: 50px;
+      font-size: 1.2em;
+      color: #666;
+    }
+    body.light-theme {
+      --card-bg: #f9f9f9;
+      --modal-bg: #fff;
+      background: #f4f6f8;
+      color: #000;
+    }
